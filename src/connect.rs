@@ -1224,9 +1224,26 @@ mod tests {
         assert_eq!(ipv6_address, "2001:db8::1".parse::<Ipv6Addr>().unwrap());
     }
 
+    #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
+    fn can_set_mark() -> bool {
+        let Ok(socket) = socket2::Socket::new(
+            socket2::Domain::IPV4,
+            socket2::Type::STREAM,
+            Some(socket2::Protocol::TCP),
+        ) else {
+            return false;
+        };
+        socket.set_mark(1).is_ok()
+    }
+
     #[tokio::test]
     #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
     async fn tcp_connect_applies_egress_fwmark() {
+        if !can_set_mark() {
+            eprintln!("Skipping test: CAP_NET_ADMIN required to set SO_MARK");
+            return;
+        }
+
         let listener = tokio::net::TcpListener::bind((Ipv4Addr::LOCALHOST, 0))
             .await
             .expect("bind listener");
@@ -1256,6 +1273,11 @@ mod tests {
     #[tokio::test]
     #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
     async fn udp_connect_applies_egress_fwmark() {
+        if !can_set_mark() {
+            eprintln!("Skipping test: CAP_NET_ADMIN required to set SO_MARK");
+            return;
+        }
+
         let target = UdpSocket::bind((Ipv4Addr::LOCALHOST, 0))
             .await
             .expect("bind target");
@@ -1285,6 +1307,11 @@ mod tests {
     #[tokio::test]
     #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
     async fn udp_dual_stack_applies_egress_fwmark() {
+        if !can_set_mark() {
+            eprintln!("Skipping test: CAP_NET_ADMIN required to set SO_MARK");
+            return;
+        }
+
         let connector = Connector::new(
             None,
             None,
