@@ -17,6 +17,7 @@ case "$ARCH-$OS" in
     "armv7l-linux") FILENAME="vproxy-$version-armv7-unknown-linux-musleabihf.tar.gz" ;;
     "i686-windows") FILENAME="vproxy-$version-i686-pc-windows-gnu.tar.gz" ;;
     "i686-linux") FILENAME="vproxy-$version-i686-unknown-linux-musl.tar.gz" ;;
+    "mipsel-linux") FILENAME="vproxy-$version-mipsel-unknown-linux-musl.tar.gz" ;;
     "x86_64-darwin") FILENAME="vproxy-$version-x86_64-apple-darwin.tar.gz" ;;
     "x86_64-windows") FILENAME="vproxy-$version-x86_64-pc-windows-gnu.tar.gz" ;;
     "x86_64-linux") FILENAME="vproxy-$version-x86_64-unknown-linux-musl.tar.gz" ;;

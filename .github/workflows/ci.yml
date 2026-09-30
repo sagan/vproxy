@@ -182,6 +182,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          components: rust-src
           override: true
 
       - name: Build Windows Target

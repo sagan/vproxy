@@ -37,6 +37,7 @@ linux_target=(
   "armv7-unknown-linux-musleabihf:jemalloc"
   "arm-unknown-linux-musleabihf:jemalloc"
   "i686-unknown-linux-musl:jemalloc"
+  "mipsel-unknown-linux-musl:jemalloc"
 )
 
 # 2. MacOS
@@ -58,7 +59,7 @@ check_linux_rustup_target_installed() {
     installed=$(rustup target list | grep "${target} (installed)")
     if [ -z "$installed" ]; then
       log "info" "Installing ${target}..."
-      rustup target add ${target}
+      rustup target add ${target} || true
     fi
   done
 }
