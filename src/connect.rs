@@ -126,8 +126,9 @@ impl Connector {
         cidr_range: Option<u8>,
         fallback: Option<Fallback>,
         connect_timeout: u64,
-        #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
-        mark: Option<u32>,
+        #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))] mark: Option<
+            u32,
+        >,
         #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
         tcp_user_timeout: Option<u64>,
         reuseaddr: Option<bool>,
@@ -1249,15 +1250,7 @@ mod tests {
             .expect("bind listener");
         let addr = listener.local_addr().expect("listener addr");
 
-        let connector = Connector::new(
-            None,
-            None,
-            None,
-            5,
-            Some(0x1234),
-            None,
-            None,
-        );
+        let connector = Connector::new(None, None, None, 5, Some(0x1234), None, None);
 
         let stream = connector
             .tcp(Extension::None)
@@ -1283,15 +1276,7 @@ mod tests {
             .expect("bind target");
         let addr = target.local_addr().expect("target addr");
 
-        let connector = Connector::new(
-            None,
-            None,
-            None,
-            5,
-            Some(0x5678),
-            None,
-            None,
-        );
+        let connector = Connector::new(None, None, None, 5, Some(0x5678), None, None);
 
         let socket = connector
             .udp(Extension::None)
@@ -1312,15 +1297,7 @@ mod tests {
             return;
         }
 
-        let connector = Connector::new(
-            None,
-            None,
-            None,
-            5,
-            Some(0x9abc),
-            None,
-            None,
-        );
+        let connector = Connector::new(None, None, None, 5, Some(0x9abc), None, None);
 
         let (preferred, fallback) = connector
             .udp(Extension::None)
