@@ -295,12 +295,11 @@ fn systemd_server_arguments() -> impl Iterator<Item = std::ffi::OsString> {
     std::env::args_os().skip(3)
 }
 
-#[cfg(test)]
+#[cfg(all(test, any(target_os = "android", target_os = "fuchsia", target_os = "linux")))]
 mod tests {
     use super::*;
 
     #[test]
-    #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
     fn test_mark_flag_parsing() {
         let opt = Opt::try_parse_from(["vproxy", "run", "--mark", "100", "http"]).unwrap();
         if let Commands::Run(args) = opt.commands {

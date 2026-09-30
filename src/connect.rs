@@ -481,10 +481,10 @@ impl TcpConnector<'_> {
 // ==== impl UdpConnector ====
 
 impl UdpConnector<'_> {
-    fn configure_socket(&self, socket: &UdpSocket) -> std::io::Result<()> {
+    fn configure_socket(&self, _socket: &UdpSocket) -> std::io::Result<()> {
         #[cfg(any(target_os = "android", target_os = "fuchsia", target_os = "linux"))]
         if let Some(mark) = self.inner.mark {
-            let socket_ref = socket2::SockRef::from(socket);
+            let socket_ref = socket2::SockRef::from(_socket);
             socket_ref.set_mark(mark)?;
         }
         Ok(())
