@@ -13,7 +13,7 @@ mod rand;
 mod route;
 mod server;
 mod state;
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", target_has_atomic = "64"))]
 mod systemd;
 
 use std::{net::SocketAddr, path::PathBuf};
@@ -60,7 +60,7 @@ pub enum Commands {
     Run(Box<BootArgs>),
 
     /// Manage the systemd service
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", target_has_atomic = "64"))]
     #[command(subcommand)]
     Systemd(SystemdCommand),
 
@@ -251,7 +251,7 @@ pub enum Oneself {
     Uninstall,
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", target_has_atomic = "64"))]
 #[derive(Subcommand)]
 pub enum SystemdCommand {
     /// Install, enable, and start the systemd service
@@ -274,7 +274,7 @@ fn main() -> Result<()> {
     let opt = Opt::parse();
     match opt.commands {
         Commands::Run(args) => server::run(*args),
-        #[cfg(target_os = "linux")]
+        #[cfg(all(target_os = "linux", target_has_atomic = "64"))]
         Commands::Systemd(command) => match command {
             SystemdCommand::Start(args) => systemd::start(*args, systemd_server_arguments()),
             SystemdCommand::Restart(args) => systemd::restart(*args, systemd_server_arguments()),
@@ -290,7 +290,7 @@ fn main() -> Result<()> {
 }
 
 /// Returns the server arguments after Clap validates `vproxy systemd <action>`.
-#[cfg(target_os = "linux")]
+#[cfg(all(target_os = "linux", target_has_atomic = "64"))]
 fn systemd_server_arguments() -> impl Iterator<Item = std::ffi::OsString> {
     std::env::args_os().skip(3)
 }

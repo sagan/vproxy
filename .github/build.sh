@@ -34,10 +34,10 @@ log() {
 linux_target=(
   "x86_64-unknown-linux-musl:mimalloc"
   "aarch64-unknown-linux-musl:mimalloc"
-  "armv7-unknown-linux-musleabihf:jemalloc"
-  "arm-unknown-linux-musleabihf:jemalloc"
-  "i686-unknown-linux-musl:jemalloc"
-  "mipsel-unknown-linux-musl:jemalloc"
+  "armv7-unknown-linux-musleabihf:mimalloc"
+  "arm-unknown-linux-musleabihf:mimalloc"
+  "i686-unknown-linux-musl:mimalloc"
+  "mipsel-unknown-linux-musl:mimalloc"
 )
 
 # 2. MacOS
@@ -56,10 +56,14 @@ windows_target=(
 check_linux_rustup_target_installed() {
   for target in ${linux_target[@]}; do
     target=$(echo $target | cut -d':' -f1)
+    if [ "$target" = "mipsel-unknown-linux-musl" ]; then
+      rustup component add rust-src || true
+      continue
+    fi
     installed=$(rustup target list | grep "${target} (installed)")
     if [ -z "$installed" ]; then
       log "info" "Installing ${target}..."
-      rustup target add ${target} || true
+      rustup target add ${target}
     fi
   done
 }
@@ -92,7 +96,13 @@ build_linux_target() {
     build_target=$(echo $target | cut -d':' -f1)
     feature=$(echo $target | cut -d':' -f2)
     log "info" "Building ${target}..."
-    if cargo zigbuild --release --no-default-features --target "${build_target}" --features "${feature}"; then
+    if [ "$build_target" = "mipsel-unknown-linux-musl" ]; then
+      build_cmd="RUSTFLAGS=\"-C relocation-model=static\" RUSTC_BOOTSTRAP=1 cargo zigbuild --release --no-default-features --target ${build_target} -Z build-std=std,panic_abort --features ${feature}"
+      eval "$build_cmd"
+    else
+      cargo zigbuild --release --no-default-features --target "${build_target}" --features "${feature}"
+    fi
+    if [ $? -eq 0 ]; then
       compress_and_move $build_target
       log "info" "Build ${target} done"
     else

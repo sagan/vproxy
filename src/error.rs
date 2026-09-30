@@ -30,11 +30,11 @@ pub enum Error {
     #[error(transparent)]
     Utf8(#[from] std::string::FromUtf8Error),
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", target_has_atomic = "64"))]
     #[error(transparent)]
     Systemd(#[from] unitbus::Error),
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", target_has_atomic = "64"))]
     #[error(transparent)]
     Journal(#[from] sdjournal::SdJournalError),
 }

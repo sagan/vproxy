@@ -91,6 +91,8 @@ rtnetlink = "0.18"
 netlink-packet-route = "0.25.1"
 futures = "0.3.30"
 realm_io = "0.5.3"
+
+[target.'cfg(all(target_os = "linux", target_has_atomic = "64"))'.dependencies]
 sdjournal = "=0.1.21"
 unitbus = { version = "=0.1.7", default-features = false, features = [
     "blocking",
